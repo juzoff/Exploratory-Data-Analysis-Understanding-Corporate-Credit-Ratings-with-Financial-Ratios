@@ -23,7 +23,7 @@ The analysis involves importing the dataset, examining its structure, and addres
 
 5. Pearson Correlation Analysis:
    - Pearson correlation coefficients are calculated to explore the relationships between financial metrics, providing insights into how metrics such as profitability, operational efficiency, and financial health relate to one another.
-   - **Asset Turnover, Free Cash Flow Per Share, Debt Equity Ratio, Operating Cash Flow Per Share, DO NOT emonstrate a significant relationship with the target variable (excluded from dashboard in #10).**
+   - **Asset Turnover, Free Cash Flow Per Share, Debt Equity Ratio, Operating Cash Flow Per Share ***DO NOT*** demonstrate a significant relationship with the target variable (therefore, excluded from dashboard in #10).**
    - **All other numerical financial attributes demonstrate a significant relationship with the target variable.**
 
 ![3](https://github.com/user-attachments/assets/a7a2408a-8042-4a80-83f1-b6cb2f0b617c)
