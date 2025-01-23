@@ -1,0 +1,480 @@
+---
+title: "Healthcare"
+output: html_document
+date: "2025-01-21"
+---
+
+```{r}
+cr <- read.csv("C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Credit Rating - S&P/corporateCreditRatingWithFinancialRatios.csv")
+
+# Print the first few rows
+head(cr, 30)
+```
+
+```{r}
+str(cr)
+```
+
+```{r}
+summary(cr)
+```
+
+
+```{r}
+sum(is.na(cr))
+```
+
+
+```{r}
+colSums(is.na(cr))
+```
+
+```{r}
+# Check for empty strings in each column
+colSums(cr == "", na.rm = TRUE)
+```
+
+
+```{r}
+unique(cr$Rating)
+```
+
+```{r}
+table(cr$Rating)
+```
+
+```{r}
+table(cr$Binary.Rating)
+```
+
+```{r}
+9. Current Ratio
+Definition: Measures a company’s ability to pay short-term obligations using short-term assets.
+Formula: Current Assets / Current Liabilities.
+Good Ratings (1): Higher values indicate strong liquidity and ability to cover short-term debts.
+Low Ratings (0): Lower values suggest liquidity issues or over-leveraging.
+
+10. Long-Term Debt to Capital
+Definition: The proportion of a company's capital that is financed by long-term debt.
+Formula: Long-Term Debt / (Long-Term Debt + Shareholder's Equity).
+Good Ratings (1): Lower values imply less reliance on debt financing, reducing risk.
+Low Ratings (0): Higher values indicate higher financial leverage, increasing risk.
+
+11. Debt-to-Equity Ratio
+Definition: Compares a company’s total debt to its shareholder equity, showing financial structure.
+Formula: Total Debt / Shareholders' Equity.
+Good Ratings (1): Lower ratios suggest a balanced or equity-heavy structure.
+Low Ratings (0): Higher ratios reflect heavy reliance on debt financing.
+
+12. Gross Margin
+Definition: The percentage of revenue left after accounting for the cost of goods sold (COGS).
+Formula: (Revenue - COGS) / Revenue × 100.
+Good Ratings (1): Higher margins indicate strong profitability and cost management.
+Low Ratings (0): Lower margins suggest weaker operational efficiency.
+
+13. Operating Margin
+Definition: The proportion of revenue left after covering operating expenses.
+Formula: Operating Income / Revenue × 100.
+Good Ratings (1): Higher values mean efficient operations and cost control.
+Low Ratings (0): Lower values show inefficiencies or higher costs.
+
+14. EBIT Margin
+Definition: Earnings before interest and taxes as a percentage of revenue, showing core profitability.
+Formula: EBIT / Revenue × 100.
+Good Ratings (1): Higher values indicate robust profitability.
+Low Ratings (0): Lower values reflect weaker earnings.
+
+15. EBITDA Margin
+Definition: Earnings before interest, taxes, depreciation, and amortization as a percentage of revenue.
+Formula: EBITDA / Revenue × 100.
+Good Ratings (1): Higher margins highlight operational efficiency.
+Low Ratings (0): Lower margins indicate struggles with profitability.
+
+16. Pre-Tax Profit Margin
+Definition: The percentage of earnings before tax as a proportion of revenue.
+Formula: Pre-Tax Income / Revenue × 100.
+Good Ratings (1): Higher values show strong earnings before taxation.
+Low Ratings (0): Lower margins may result from high debt interest or weaker earnings.
+
+17. Net Profit Margin
+Definition: The percentage of net income relative to revenue.
+Formula: Net Income / Revenue × 100.
+Good Ratings (1): Higher values reflect strong overall profitability.
+Low Ratings (0): Lower values suggest reduced earnings or losses.
+
+18. Asset Turnover
+Definition: Indicates how efficiently a company uses its assets to generate revenue.
+Formula: Revenue / Total Assets.
+Good Ratings (1): Higher turnover shows effective asset utilization.
+Low Ratings (0): Lower turnover suggests inefficiency or underutilization.
+
+19. Return on Equity (ROE)
+Definition: Measures profitability relative to shareholder equity.
+Formula: Net Income / Shareholder’s Equity × 100.
+Good Ratings (1): Higher ROE indicates strong returns for shareholders.
+Low Ratings (0): Lower or negative ROE reflects weak or negative returns.
+
+20. Return on Tangible Equity
+Definition: Similar to ROE, but focuses only on tangible equity (excluding intangible assets).
+Formula: Net Income / Tangible Equity × 100.
+Good Ratings (1): Higher values suggest efficient resource use.
+Low Ratings (0): Lower values indicate weak profitability.
+
+21. Return on Assets (ROA)
+Definition: Reflects how effectively a company uses assets to generate profit.
+Formula: Net Income / Total Assets × 100.
+Good Ratings (1): Higher ROA shows strong asset efficiency.
+Low Ratings (0): Lower ROA signals inefficiency.
+
+22. Return on Investment (ROI)
+Definition: Measures the efficiency of investments relative to net gains.
+Formula: (Net Gains / Investment Cost) × 100.
+Good Ratings (1): Higher ROI means successful investments.
+Low Ratings (0): Lower ROI reflects poor investment performance.
+
+23. Operating Cash Flow per Share
+Definition: Cash generated from operations per outstanding share.
+Formula: Operating Cash Flow / Number of Shares.
+Good Ratings (1): Positive and high values indicate strong operational cash flow.
+Low Ratings (0): Negative or low values suggest cash flow issues.
+
+24. Free Cash Flow per Share
+Definition: Cash remaining after expenses and capital investments, per share.
+Formula: Free Cash Flow / Number of Shares.
+Good Ratings (1): Higher values show surplus cash for growth or dividends.
+Low Ratings (0): Lower or negative values indicate tight cash flow.
+```
+
+
+```{r}
+S&P Global Ratings uses these categories in their assessments of creditworthiness:
+
+Investment Grade (Higher Credit Quality)
+AAA: Extremely strong capacity to meet financial commitments.
+AA (AA+, AA, AA-): Very strong capacity to meet financial commitments.
+A (A+, A, A-): Strong capacity to meet financial commitments, but more susceptible to adverse conditions.
+BBB (BBB+, BBB, BBB-): Adequate capacity to meet financial commitments but subject to adverse economic conditions.
+
+Junk Grade (Speculative or High-Yield)
+BB (BB+, BB, BB-): Less vulnerable in the near-term but faces major ongoing uncertainties.
+B (B+, B, B-): More vulnerable to adverse conditions but currently meeting financial commitments.
+CCC, CC, C: Currently highly vulnerable or at risk of default.
+D: Default.
+```
+
+
+
+
+```{r}
+# Load the data
+cr <- read.csv("C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Credit Rating - S&P/corporateCreditRatingWithFinancialRatios.csv")
+
+# List of numeric columns
+numeric_columns <- c("Current.Ratio", "Long.term.Debt...Capital", "Debt.Equity.Ratio", "Gross.Margin", 
+                     "Operating.Margin", "EBIT.Margin", "EBITDA.Margin", "Pre.Tax.Profit.Margin", 
+                     "Net.Profit.Margin", "Asset.Turnover", "ROE...Return.On.Equity", "Return.On.Tangible.Equity",
+                     "ROA...Return.On.Assets", "ROI...Return.On.Investment", "Operating.Cash.Flow.Per.Share", 
+                     "Free.Cash.Flow.Per.Share")
+
+# Set options to avoid scientific notation
+options(scipen = 999)
+
+# Initialize an empty list to store the results
+correlation_results <- list()
+
+# Loop through numeric columns and calculate correlation with Binary.Rating
+for (col in numeric_columns) {
+  # Calculate Pearson correlation (point-biserial) and p-value
+  cor_result <- cor.test(cr[[col]], cr$Binary.Rating)
+  
+  # Store the results
+  correlation_results[[col]] <- list(
+    r_value = cor_result$estimate,  # Correlation coefficient
+    p_value = cor_result$p.value   # P-value
+  )
+}
+
+# Convert the results to a data frame for better readability
+correlation_df <- data.frame(
+  Attribute = numeric_columns,
+  r_value = sapply(correlation_results, function(x) x$r_value),
+  p_value = sapply(correlation_results, function(x) x$p_value)
+)
+
+# Print the results
+print(correlation_df)
+```
+
+```{r}
+# Load the data
+cr <- read.csv("C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Credit Rating - S&P/corporateCreditRatingWithFinancialRatios.csv")
+
+# List of numeric columns
+numeric_columns <- c("Current.Ratio", "Long.term.Debt...Capital", "Debt.Equity.Ratio", "Gross.Margin", 
+                     "Operating.Margin", "EBIT.Margin", "EBITDA.Margin", "Pre.Tax.Profit.Margin", 
+                     "Net.Profit.Margin", "Asset.Turnover", "ROE...Return.On.Equity", "Return.On.Tangible.Equity",
+                     "ROA...Return.On.Assets", "ROI...Return.On.Investment", "Operating.Cash.Flow.Per.Share", 
+                     "Free.Cash.Flow.Per.Share")
+
+# Ensure Binary.Rating is a factor
+cr$Binary.Rating <- factor(cr$Binary.Rating)
+
+# Initialize an empty list to store the mean values
+mean_values <- list()
+
+# Loop through numeric columns and calculate mean values for each Binary.Rating class
+for (col in numeric_columns) {
+  # Calculate mean for Binary.Rating = 0 and Binary.Rating = 1
+  means <- tapply(cr[[col]], cr$Binary.Rating, mean, na.rm = TRUE)
+  mean_values[[col]] <- means
+}
+
+# Convert the list to a data frame for better readability
+mean_values_df <- data.frame(
+  Attribute = numeric_columns,
+  Mean_Class_0 = sapply(numeric_columns, function(col) ifelse("0" %in% names(mean_values[[col]]), mean_values[[col]]["0"], NA)),
+  Mean_Class_1 = sapply(numeric_columns, function(col) ifelse("1" %in% names(mean_values[[col]]), mean_values[[col]]["1"], NA))
+)
+
+# Print the results
+print(mean_values_df)
+```
+
+
+```{r}
+# Load the data
+cr <- read.csv("C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Credit Rating - S&P/corporateCreditRatingWithFinancialRatios.csv")
+
+# List of numeric columns
+numeric_columns <- c("Current.Ratio", "Long.term.Debt...Capital", "Debt.Equity.Ratio", "Gross.Margin", 
+                     "Operating.Margin", "EBIT.Margin", "EBITDA.Margin", "Pre.Tax.Profit.Margin", 
+                     "Net.Profit.Margin", "Asset.Turnover", "ROE...Return.On.Equity", "Return.On.Tangible.Equity",
+                     "ROA...Return.On.Assets", "ROI...Return.On.Investment", "Operating.Cash.Flow.Per.Share", 
+                     "Free.Cash.Flow.Per.Share")
+
+# Ensure Binary.Rating is numeric (convert factor levels to 0 and 1)
+cr$Binary.Rating <- as.numeric(as.character(cr$Binary.Rating))
+
+# Initialize an empty list to store correlation and mean results
+results <- list()
+
+# Loop through numeric columns to calculate correlation and mean values for each Binary.Rating class
+for (col in numeric_columns) {
+  # Calculate correlation (point-biserial)
+  cor_result <- cor.test(cr[[col]], cr$Binary.Rating)
+  
+  # Calculate mean values for each Binary.Rating class
+  means <- tapply(cr[[col]], cr$Binary.Rating, mean, na.rm = TRUE)
+  
+  # Store results in a list
+  results[[col]] <- list(
+    r_value = cor_result$estimate,       # Correlation coefficient
+    p_value = cor_result$p.value,       # P-value
+    Mean_Class_0 = means["0"],          # Mean for Class 0
+    Mean_Class_1 = means["1"]           # Mean for Class 1
+  )
+}
+
+# Convert the results to a data frame
+combined_df <- data.frame(
+  Attribute = numeric_columns,
+  r_value = sapply(results, function(x) x$r_value),
+  p_value = sapply(results, function(x) x$p_value),
+  Mean_Class_0 = sapply(results, function(x) x$Mean_Class_0),
+  Mean_Class_1 = sapply(results, function(x) x$Mean_Class_1)
+)
+
+# Print the combined results
+print(combined_df)
+```
+
+
+```{r}
+str(combined_df)
+```
+
+
+```{r}
+str(cr)
+```
+
+#OLD
+```{r}
+# Merging correlation_df with cr based on matching Attribute and numeric columns in cr
+cr2 <- cr
+
+# Loop through the numeric columns and add the r_value and p_value from correlation_df to cr
+for (col in numeric_columns) {
+  cr2[[paste0(col, "_r_value")]] <- correlation_df$r_value[correlation_df$Attribute == col]
+  cr2[[paste0(col, "_p_value")]] <- correlation_df$p_value[correlation_df$Attribute == col]
+}
+
+# View the first few rows of cr2 to check if the merging worked correctly
+head(cr2)
+```
+
+
+
+```{r}
+# Ensure numeric_columns matches the attributes in combined_df
+numeric_columns <- combined_df$Attribute
+
+# Create a copy of cr to preserve the original data
+cr2 <- cr
+
+# Loop through numeric columns and add corresponding r_value, p_value, Mean_Class_0, and Mean_Class_1 from combined_df
+for (col in numeric_columns) {
+  cr2[[paste0(col, "_r_value")]] <- combined_df$r_value[combined_df$Attribute == col]
+  cr2[[paste0(col, "_p_value")]] <- combined_df$p_value[combined_df$Attribute == col]
+  cr2[[paste0(col, "_Mean_Class_0")]] <- combined_df$Mean_Class_0[combined_df$Attribute == col]
+  cr2[[paste0(col, "_Mean_Class_1")]] <- combined_df$Mean_Class_1[combined_df$Attribute == col]
+}
+
+# View the first few rows of the updated cr2 data frame to confirm the addition
+head(cr2)
+```
+
+
+```{r}
+str(cr2)
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# Set options to avoid scientific notation
+options(scipen = 999)
+
+# Identify character columns
+categorical_columns <- names(cr)[sapply(cr, is.character)]
+
+# Initialize a results data frame
+results_df <- data.frame(Attribute = character(), P_Value = numeric(), Eta_Squared = numeric(), stringsAsFactors = FALSE)
+
+# Loop through each categorical column
+for (col in categorical_columns) {
+  # Create a contingency table
+  contingency_table <- table(cr[[col]], cr$Binary.Rating)
+  
+  # Perform chi-square test
+  chi_test <- chisq.test(contingency_table)
+  
+  # Calculate eta-squared
+  eta_squared <- chi_test$statistic / sum(contingency_table)
+  
+  # Append results to the data frame
+  results_df <- rbind(results_df, data.frame(
+    Attribute = col,
+    P_Value = chi_test$p.value,         # Keep p-value in full precision
+    Eta_Squared = round(eta_squared, 4) # Round only eta-squared to 4 decimal places
+  ))
+}
+
+# View the results
+print(results_df)
+```
+
+```{r}
+# List of character attributes to create contingency tables for
+categorical_columns <- c("Rating.Agency", "Corporation", "Rating", "Rating.Date", "Sector", "Ticker")
+
+# Initialize an empty list to store the contingency tables
+contingency_tables <- list()
+
+# Loop through each character column
+for (col in categorical_columns) {
+  # Create a contingency table
+  contingency_table <- table(factor(cr[[col]]), factor(cr$Binary.Rating, levels = c(0, 1)))
+  
+  # Convert the contingency table to a data frame
+  contingency_df <- as.data.frame.matrix(contingency_table)  # Converts to wide format
+  
+  # Add row names as a new column for easier identification
+  contingency_df$Var1 <- rownames(contingency_df)
+  
+  # Rename the columns for clarity
+  colnames(contingency_df) <- c("Var2 (0)", "Var3 (1)", "Var1")
+  
+  # Reorder columns to have Var1 first
+  contingency_df <- contingency_df[, c("Var1", "Var2 (0)", "Var3 (1)")]
+  
+  # Add the contingency table to the list
+  contingency_tables[[col]] <- contingency_df
+}
+
+# View the contingency tables for each variable
+contingency_tables
+```
+
+
+
+```{r}
+table(cr$Binary.Rating)
+```
+
+
+
+
+```{r}
+# List of character attributes to create contingency tables for
+categorical_columns <- c("Rating.Agency", "Corporation", "Rating", "Rating.Date", "Sector", "Ticker")
+
+# Initialize an empty data frame to store all the contingency tables combined
+combined_contingency_df <- data.frame()
+
+# Loop through each character column
+for (col in categorical_columns) {
+  # Create a contingency table
+  contingency_table <- table(factor(cr[[col]]), factor(cr$Binary.Rating, levels = c(0, 1)))
+  
+  # Convert the contingency table to a data frame
+  contingency_df <- as.data.frame.matrix(contingency_table)  # Converts to wide format
+  
+  # Add row names as a new column for easier identification
+  contingency_df$Var1 <- rownames(contingency_df)
+  
+  # Rename the columns for clarity
+  colnames(contingency_df) <- c("Var2 (0)", "Var3 (1)", "Var1")
+  
+  # Reorder columns to have Var1 first
+  contingency_df <- contingency_df[, c("Var1", "Var2 (0)", "Var3 (1)")]
+  
+  # Add a column to distinguish the categorical variable the table corresponds to
+  contingency_df$Variable <- col
+  
+  # Combine the individual contingency tables into one data frame
+  combined_contingency_df <- rbind(combined_contingency_df, contingency_df)
+}
+
+# View the combined contingency tables with the 'Variable' column
+head(combined_contingency_df)
+```
+
+
+```{r}
+str(combined_contingency_df)
+```
+
+
+
+```{r}
+cr3 <- rbind(combined_contingency_df, cr2)
+```
+
+
+```{r}
+# Save cr2 to the specified location
+write.csv(cr2, file = "C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Credit Rating - S&P/cr2.csv", row.names = FALSE)
+
+# Save combined_contingency_df to the specified location
+write.csv(combined_contingency_df, file = "C:/Users/jivko/Documents/Data Analytics, Big Data, and Predictive Analytics/Personal Project/Credit Rating - S&P/combined_contingency_df.csv", row.names = FALSE)
+```
+
